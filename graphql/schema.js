@@ -6,8 +6,13 @@ module.exports = buildSchema(`
         views: Int!
     }
 
+    type AuthData {
+        token: String!
+        userId: String!
+    }
+
     type RootQuery {
-        hello: TestData!
+        login(email: String!,password: String!): AuthData!
     }
 
     type RootMutation {
