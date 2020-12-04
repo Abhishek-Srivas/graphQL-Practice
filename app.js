@@ -6,22 +6,21 @@ const mongoose = require("mongoose")
 
 const app = express();
 
-
-//Error handling Schema
-app.use((err,req,res,next) => {
-    res.status(err.status);
-    res.send({
-        err
-    })
-})
-
-
-
 //Graphql Route
 app.use('/graphql',graphqlHTTP({ // need two item to work 1.Schema 2.Rootvalue
     schema: graphqlSchema,
     rootValue: graphqlResolver,
-    graphiql:true
+    graphiql:true,
+    customFormatErrorFn(err) {
+        if(!err.originalError) {
+            return err;
+        }
+        const data = err.originalError.data;
+        const message = err.message || 'an error occured';
+        const code = err.originalError.code || 500;
+        return {message,data,status:code}
+
+    }
 }));
 
 mongoose.connect("mongodb+srv://Abhishek_Srivas:Pagalworld@cluster0.0sntl.mongodb.net/Database?retryWrites=true&w=majority",{
